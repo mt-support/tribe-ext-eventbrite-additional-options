@@ -2,12 +2,13 @@
 /**
  * Plugin Name: Eventbrite Tickets Extension: Additional Options
  * Description: Adds a new Eventbrite options section to the bottom of wp-admin > Events > Settings > Imports tab. Options include text above or below iframe ticket area, iframe height, moving ticket area's location on the Single Event view, displaying tickets for Private Eventbrite events, change API URL (e.g. from .com to .co.uk), and more.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Extension Class: Tribe__Extension__Eventbrite_Addl_Opts
  * Author: Modern Tribe, Inc.
  * Author URI: http://m.tri.be/1971
- * License: GPLv2 or later
- * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * License: GPLv3 or later
+ * License URI: https://www.gnu.org/licenses/gpl-3.0.html
+ * Text Domain: tribe-extension
  */
 
 // Do not load unless Tribe Common is fully loaded.
@@ -29,11 +30,14 @@ class Tribe__Extension__Eventbrite_Addl_Opts extends Tribe__Extension {
 	 */
 	protected function construct() {
 		$this->add_required_plugin( 'Tribe__Events__Main', '4.4' );
-		$this->add_required_plugin( 'Tribe__Events__Tickets__Eventbrite__Main', '4.4' );
+
+		// Version 4.4.6 is when the `tribe_events_eventbrite_iframe_height` filter was added.
+		$this->add_required_plugin( 'Tribe__Events__Tickets__Eventbrite__Main', '4.4.6' );
 
 		// Set the extension's TEC URL
 		$this->set_url( 'https://theeventscalendar.com/extensions/eventbrite-additional-options/' );
-		$this->set_version( '1.0.1' );
+
+		$this->set_version( '1.0.2' );
 	}
 
 	/**
@@ -101,7 +105,7 @@ class Tribe__Extension__Eventbrite_Addl_Opts extends Tribe__Extension {
 
 		$setting_helper->add_fields(
 			$fields,
-			'imports',
+			'imports', // not the 'event-tickets' ("Tickets" tab) because it doesn't exist without Event Tickets
 			'import-defaults-update_authority',
 			true
 		);
@@ -111,6 +115,9 @@ class Tribe__Extension__Eventbrite_Addl_Opts extends Tribe__Extension {
 	 * Extension initialization and hooks.
 	 */
 	public function init() {
+		// Load plugin textdomain
+		load_plugin_textdomain( 'tribe-extension', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
+
 		add_action( 'admin_init', array( $this, 'add_settings' ) );
 
 		$before = tribe_get_option( $this->opts_prefix . 'content_before' );
