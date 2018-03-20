@@ -132,17 +132,13 @@ class Tribe__Extension__Eventbrite_Addl_Opts extends Tribe__Extension {
 
 		$show_tickets_private_events = tribe_get_option( $this->opts_prefix . 'show_tickets_private_events' );
 		if ( ! empty( $show_tickets_private_events ) ) {
-			add_filter( 'tribe_events_eventbrite_the_tickets', array(
-				$this,
-				'render_tickets_iframe_private_eb_events'
-			) );
+			add_filter( 'tribe_events_eventbrite_the_tickets', array( $this, 'render_tickets_iframe_private_eb_events' ) );
 		}
 
-		add_filter( 'tribe_events_eb_iframe_html', array( $this, 'iframe_height' ), 10, 3 );
+		add_filter( 'tribe_events_eventbrite_iframe_height', array( $this, 'iframe_height' ), 10, 1 );
 
 		if ( 'en_US' !== $this->get_chosen_eb_locale() ) {
 			add_filter( 'tribe-eventbrite-base_api_url', array( $this, 'api_url' ) );
-
 			add_filter( 'tribe_eb_api_sync_event', array( $this, 'eb_currency_for_update_create' ), 10, 5 );
 		}
 
@@ -186,34 +182,22 @@ class Tribe__Extension__Eventbrite_Addl_Opts extends Tribe__Extension {
 	}
 
 	/**
-	 * Replace the iframe's inline styling height within the ticket area HTML.
+	 * Replace the iframe's height.
 	 *
-	 * @see 'tribe_events_eb_iframe_html'
+	 * @see 'tribe_events_eventbrite_iframe_height'
 	 *
-	 * @param string $html
-	 * @param string $event_id associated Eventbrite ID
-	 * @param int    $post_id
+	 * @param string $iframe_height
 	 *
-	 * @return mixed|string
+	 * @return int
 	 */
-	public function iframe_height( $html, $event_id, $post_id ) {
+	public function iframe_height( $iframe_height = 200 ) {
 		$new_height = absint( tribe_get_option( $this->opts_prefix . 'iframe_px' ) );
 
-		if ( 200 === $new_height ) {
-			return $html;
+		if ( 0 === $new_height ) {
+			$new_height = $iframe_height;
 		}
 
-		if ( empty( $new_height ) || false === strpos( $html, 'eventbrite-ticket-embed' ) ) {
-			return $html;
-		}
-
-		$replace_this = 'style="height:200px;';
-
-		$replace_with = sprintf( 'style="height: %dpx;', $new_height ); // integers only
-
-		$new_html = str_replace( $replace_this, $replace_with, $html );
-
-		return $new_html;
+		return (int) $new_height;
 	}
 
 	/**
@@ -413,7 +397,7 @@ class Tribe__Extension__Eventbrite_Addl_Opts extends Tribe__Extension {
 	/**
 	 * Displays Eventbrite Tickets iframe even if the Eventbrite event is Private.
 	 *
-	 * @see 'tribe_events_eventbrite_the_tickets'
+	 * @see Tribe__Events__Tickets__Eventbrite__Template::the_tickets()
 	 *
 	 * @return string|void
 	 */
@@ -422,35 +406,46 @@ class Tribe__Extension__Eventbrite_Addl_Opts extends Tribe__Extension {
 		$api     = tribe( 'eventbrite.api' );
 		$event   = $api->get_event( $post_id );
 
-		if ( empty( $event->id ) ) {
+		if ( ! $event ) {
 			return;
 		}
 
 		$event_id = $event->id;
 
-		$iframe_src = sprintf( 'https://www.eventbrite%s/tickets-external?eid=%d&amp;ref=etckt&v=2', $this->get_eb_tld(), $event_id );
-		$iframe_src = apply_filters( 'tribe_events_eb_iframe_url', $iframe_src );
+		$iframe_url = sprintf( 'https://www.eventbrite%s/tickets-external?eid=%d&amp;ref=etckt&v=2', $this->get_eb_tld(), $event_id );
+		$iframe_url = apply_filters( 'tribe_events_eb_iframe_url', $iframe_url, $event_id );
+
+		$iframe_height = Tribe__Extension__Eventbrite_Addl_Opts::instance()->iframe_height();
 
 		$html = '';
 
 		if (
 			! empty( $event_id ) &&
+			// Commented out because this is the whole point -- allowing Private events to be displayed -- in which case `$event->listed` would be `false`
+			// ( isset( $event->listed ) && $event->listed ) &&
 			$api->is_live( $post_id ) &&
-			tribe_event_show_tickets( $post_id )
+			tribe_event_show_tickets( $post_id, $event )
 		) {
 			$html = sprintf(
-				'<div class="eventbrite-ticket-embed" style="width:100%%; text-align:left;">
-						<iframe id="eventbrite-tickets-%1$s" src="%2$s" style="height:200px; width:100%%; overflow:auto;"></iframe>
-						<div style="font-family:Helvetica, Arial; font-size:10px; padding:5px 0 5px; margin:2px; width:100%%; text-align:left;">
-							<a target="_blank" href="https://www.eventbrite.com/features?ref=etckt" style="color:#ddd; text-decoration:none;">Event registration</a>
-							<span style="color:#ddd"> powered by </span>
-							<a target="_blank" href="https://www.eventbrite.com?ref=etckt" style="color:#ddd; text-decoration:none;">Eventbrite</a>
+				'<div class="eventbrite-ticket-embed">
+						<iframe id="eventbrite-tickets-%1$s" src="%2$s" height="%3$s" width="100%%" frameborder="0" allowtransparency="true"></iframe>
+						<div style="font-family:Helvetica, Arial, sans-serif; font-size:12px;margin:2px 0; width:100%; text-align:left;" >
+							<a class="eventbrite-powered-by-eb" style="color: #ADB0B6; text-decoration: none;" target="_blank" rel="noopener" href="http://www.eventbrite.com/">Powered by Eventbrite</a>
 						</div>
-					</div>', $event_id, $iframe_src );
+					</div>',
+				$event_id,
+				$iframe_url,
+				$iframe_height
+			);
 		}
 
-		$html = apply_filters( 'tribe_template_factory_debug', $html, 'Tribe__Events__Eventbrite__Template::the_tickets' );
-
+		/**
+		 * Allows Eventbrite iframe HTML to be modified.
+		 *
+		 * @param string $html
+		 * @param string $event_id associated Eventbrite ID
+		 * @param int    $post_id
+		 */
 		return apply_filters( 'tribe_events_eb_iframe_html', $html, $event_id, $post_id );
 	}
 
