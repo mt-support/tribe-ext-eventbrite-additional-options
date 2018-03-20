@@ -8,7 +8,7 @@
  * Author URI: http://m.tri.be/1971
  * License: GPLv3 or later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
- * Text Domain: tribe-extension
+ * Text Domain: tribe-ext-eventbrite-additional-options
  */
 
 // Do not load unless Tribe Common is fully loaded.
@@ -53,42 +53,42 @@ if (
 			$fields = array(
 				$this->opts_prefix . 'heading'        => array(
 					'type' => 'html',
-					'html' => '<h3>' . esc_html__( 'Eventbrite Additional Options', 'tribe-extension' ) . '</h3>',
+					'html' => '<h3>' . esc_html__( 'Eventbrite Additional Options', 'tribe-ext-eventbrite-additional-options' ) . '</h3>',
 				),
 				$this->opts_prefix . 'content_before' => array(
 					'type'            => 'text',
-					'label'           => esc_html__( 'Heading above ticket area', 'tribe-extension' ),
-					'tooltip'         => esc_html__( 'Adds a heading above the ticket area. By default, this is blank and no heading is shown.', 'tribe-extension' ),
+					'label'           => esc_html__( 'Heading above ticket area', 'tribe-ext-eventbrite-additional-options' ),
+					'tooltip'         => esc_html__( 'Adds a heading above the ticket area. By default, this is blank and no heading is shown.', 'tribe-ext-eventbrite-additional-options' ),
 					'validation_type' => 'textarea',
 				),
 
 				$this->opts_prefix . 'content_after' => array(
 					'type'            => 'text',
-					'label'           => esc_html__( 'Text underneath ticket area', 'tribe-extension' ),
-					'tooltip'         => esc_html__( 'By default, there is no content after the ticket area.', 'tribe-extension' ),
+					'label'           => esc_html__( 'Text underneath ticket area', 'tribe-ext-eventbrite-additional-options' ),
+					'tooltip'         => esc_html__( 'By default, there is no content after the ticket area.', 'tribe-ext-eventbrite-additional-options' ),
 					'validation_type' => 'textarea',
 				),
 
 				$this->opts_prefix . 'iframe_px' => array(
 					'type'            => 'text',
-					'label'           => esc_html__( 'Tickets area height', 'tribe-extension' ),
+					'label'           => esc_html__( 'Tickets area height', 'tribe-ext-eventbrite-additional-options' ),
 					'default'         => 200,
-					'tooltip'         => esc_html__( 'The height of the iframe ticket area in pixels.', 'tribe-extension' ),
+					'tooltip'         => esc_html__( 'The height of the iframe ticket area in pixels.', 'tribe-ext-eventbrite-additional-options' ),
 					'validation_type' => 'positive_int',
 				),
 
 				$this->opts_prefix . 'locale' => array(
 					'type'            => 'dropdown',
-					'label'           => esc_html__( 'Eventbrite Locale', 'tribe-extension' ),
+					'label'           => esc_html__( 'Eventbrite Locale', 'tribe-ext-eventbrite-additional-options' ),
 					'default'         => 'en_US',
-					'tooltip'         => esc_html__( 'This tells eventbrite.com which locale to use.', 'tribe-extension' ),
+					'tooltip'         => esc_html__( 'This tells eventbrite.com which locale to use.', 'tribe-ext-eventbrite-additional-options' ),
 					'validation_type' => 'options',
 					'options'         => $this->eb_locale_country_name_array(),
 				),
 
 				$this->opts_prefix . 'ticket_single_location' => array(
 					'type'            => 'dropdown',
-					'label'           => esc_html__( 'Location of Tickets form', 'tribe-extension' ),
+					'label'           => esc_html__( 'Location of Tickets form', 'tribe-ext-eventbrite-additional-options' ),
 					'default'         => 'tribe_events_single_event_after_the_meta',
 					'validation_type' => 'options',
 					'options'         => $this->single_event_display_locations_array(),
@@ -96,8 +96,8 @@ if (
 
 				$this->opts_prefix . 'show_tickets_private_events' => array(
 					'type'            => 'checkbox_bool',
-					'label'           => esc_html__( 'Display Tickets for Private Events', 'tribe-extension' ),
-					'tooltip'         => esc_html__( 'By default, Eventbrite Tickets only displays tickets for events marked Public on Eventbrite. Check this box to also display tickets for the Private events that you have imported.', 'tribe-extension' ),
+					'label'           => esc_html__( 'Display Tickets for Private Events', 'tribe-ext-eventbrite-additional-options' ),
+					'tooltip'         => esc_html__( 'By default, Eventbrite Tickets only displays tickets for events marked Public on Eventbrite. Check this box to also display tickets for the Private events that you have imported.', 'tribe-ext-eventbrite-additional-options' ),
 					'validation_type' => 'boolean',
 				),
 
@@ -116,7 +116,7 @@ if (
 		 */
 		public function init() {
 			// Load plugin textdomain
-			load_plugin_textdomain( 'tribe-extension', false, basename( dirname( __FILE__ ) ) . '/languages/' );
+			load_plugin_textdomain( 'tribe-ext-eventbrite-additional-options', false, basename( dirname( __FILE__ ) ) . '/languages/' );
 
 			add_action( 'admin_init', array( $this, 'add_settings' ) );
 
@@ -235,23 +235,23 @@ if (
 		 */
 		private function eb_locale_country_name_array() {
 			$array = array(
-				'es_AR' => __( 'Argentina', 'tribe-extension' ),
-				'en_AU' => __( 'Australia', 'tribe-extension' ),
-				'pt_BR' => __( 'Brazil', 'tribe-extension' ),
-				'en_CA' => __( 'Canada (EN)', 'tribe-extension' ),
-				'fr_CA' => __( 'Canada (FR)', 'tribe-extension' ),
-				'de_DE' => __( 'Germany', 'tribe-extension' ),
-				'es_ES' => __( 'Spain', 'tribe-extension' ),
-				'fr_FR' => __( 'France', 'tribe-extension' ),
-				'en_HK' => __( 'Hong Kong', 'tribe-extension' ),
-				'en_IE' => __( 'Ireland', 'tribe-extension' ),
-				'it_IT' => __( 'Italy', 'tribe-extension' ),
-				'nl_NL' => __( 'Netherlands', 'tribe-extension' ),
-				'en_NZ' => __( 'New Zealand', 'tribe-extension' ),
-				'pt_PT' => __( 'Portugal', 'tribe-extension' ),
-				'en_SG' => __( 'Singapore', 'tribe-extension' ),
-				'en_GB' => __( 'United Kingdom', 'tribe-extension' ),
-				'en_US' => __( 'United States', 'tribe-extension' ),
+				'es_AR' => __( 'Argentina', 'tribe-ext-eventbrite-additional-options' ),
+				'en_AU' => __( 'Australia', 'tribe-ext-eventbrite-additional-options' ),
+				'pt_BR' => __( 'Brazil', 'tribe-ext-eventbrite-additional-options' ),
+				'en_CA' => __( 'Canada (EN)', 'tribe-ext-eventbrite-additional-options' ),
+				'fr_CA' => __( 'Canada (FR)', 'tribe-ext-eventbrite-additional-options' ),
+				'de_DE' => __( 'Germany', 'tribe-ext-eventbrite-additional-options' ),
+				'es_ES' => __( 'Spain', 'tribe-ext-eventbrite-additional-options' ),
+				'fr_FR' => __( 'France', 'tribe-ext-eventbrite-additional-options' ),
+				'en_HK' => __( 'Hong Kong', 'tribe-ext-eventbrite-additional-options' ),
+				'en_IE' => __( 'Ireland', 'tribe-ext-eventbrite-additional-options' ),
+				'it_IT' => __( 'Italy', 'tribe-ext-eventbrite-additional-options' ),
+				'nl_NL' => __( 'Netherlands', 'tribe-ext-eventbrite-additional-options' ),
+				'en_NZ' => __( 'New Zealand', 'tribe-ext-eventbrite-additional-options' ),
+				'pt_PT' => __( 'Portugal', 'tribe-ext-eventbrite-additional-options' ),
+				'en_SG' => __( 'Singapore', 'tribe-ext-eventbrite-additional-options' ),
+				'en_GB' => __( 'United Kingdom', 'tribe-ext-eventbrite-additional-options' ),
+				'en_US' => __( 'United States', 'tribe-ext-eventbrite-additional-options' ),
 			);
 
 			$array = $this->append_array_keys_to_values( $array );
@@ -459,10 +459,10 @@ if (
 		 */
 		private function single_event_display_locations_array() {
 			$array = array(
-				'tribe_events_single_event_before_the_content' => __( 'After Featured Image, Before Description', 'tribe-extension' ),
-				'tribe_events_single_event_after_the_content'  => __( 'After Description', 'tribe-extension' ),
-				'tribe_events_single_event_before_the_meta'    => __( 'Before the Meta', 'tribe-extension' ),
-				'tribe_events_single_event_after_the_meta'     => __( 'After the Meta', 'tribe-extension' ),
+				'tribe_events_single_event_before_the_content' => __( 'After Featured Image, Before Description', 'tribe-ext-eventbrite-additional-options' ),
+				'tribe_events_single_event_after_the_content'  => __( 'After Description', 'tribe-ext-eventbrite-additional-options' ),
+				'tribe_events_single_event_before_the_meta'    => __( 'Before the Meta', 'tribe-ext-eventbrite-additional-options' ),
+				'tribe_events_single_event_after_the_meta'     => __( 'After the Meta', 'tribe-ext-eventbrite-additional-options' ),
 			);
 
 			return $array;

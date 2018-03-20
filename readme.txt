@@ -41,6 +41,7 @@ We're always interested in your feedback and our [premium forums](https://theeve
 
 * Tweak - Now requires Eventbrite Tickets version 4.4.6+
 * Tweak - Uses the `tribe_events_eventbrite_iframe_height` filter instead of performing HTML string manipulation
+* Fix - Updated text domain to be unique and added a .pot file for translations.
 
 = 1.0.1 2018-01-08 =
 
