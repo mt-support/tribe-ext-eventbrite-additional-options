@@ -1,14 +1,16 @@
 <?php
 /**
- * Plugin Name: Eventbrite Tickets Extension: Additional Options
- * Description: Adds a new Eventbrite options section to the bottom of wp-admin > Events > Settings > Imports tab. Options include text above or below iframe ticket area, iframe height, moving ticket area's location on the Single Event view, displaying tickets for Private Eventbrite events, change API URL (e.g. from .com to .co.uk), and more.
- * Version: 1.0.2
- * Extension Class: Tribe__Extension__Eventbrite_Addl_Opts
- * Author: Modern Tribe, Inc.
- * Author URI: http://m.tri.be/1971
- * License: GPLv3 or later
- * License URI: https://www.gnu.org/licenses/gpl-3.0.html
- * Text Domain: tribe-ext-eventbrite-additional-options
+ * Plugin Name:       Eventbrite Tickets Extension: Additional Options
+ * Plugin URI:        https://theeventscalendar.com/extensions/eventbrite-additional-options/
+ * GitHub Plugin URI: https://github.com/mt-support/tribe-ext-eventbrite-additional-options
+ * Description:       Adds a new Eventbrite options section to the bottom of wp-admin > Events > Settings > Imports tab. Options include text above or below iframe ticket area, iframe height, moving ticket area's location on the Single Event view, displaying tickets for Private Eventbrite events, change API URL (e.g. from .com to .co.uk), and more.
+ * Version:           1.0.3
+ * Extension Class:   Tribe__Extension__Eventbrite_Addl_Opts
+ * Author:            Modern Tribe, Inc.
+ * Author URI:        http://m.tri.be/1971
+ * License:           GPLv3 or later
+ * License URI:       https://www.gnu.org/licenses/gpl-3.0.html
+ * Text Domain:       tribe-ext-eventbrite-additional-options
  */
 
 // Do not load unless Tribe Common is fully loaded.
@@ -20,7 +22,11 @@ if (
 	 * Extension main class, class begins loading on init() function.
 	 */
 	class Tribe__Extension__Eventbrite_Addl_Opts extends Tribe__Extension {
-
+		/**
+		 * Namespace prefix for this extension's database options.
+		 *
+		 * @var string
+		 */
 		protected $opts_prefix = 'tribe_ext_eventbrite_opts_';
 
 		/**
@@ -36,8 +42,6 @@ if (
 
 			// Set the extension's TEC URL
 			$this->set_url( 'https://theeventscalendar.com/extensions/eventbrite-additional-options/' );
-
-			$this->set_version( '1.0.2' );
 		}
 
 		/**
@@ -406,8 +410,16 @@ if (
 		 */
 		public function render_tickets_iframe_private_eb_events() {
 			$post_id = get_the_ID();
-			$api     = tribe( 'eventbrite.api' );
-			$event   = $api->get_event( $post_id );
+
+			if ( class_exists( 'Tribe__Events__Tickets__Eventbrite__Event' ) ) {
+				// Eventbrite Tickets version 4.5+
+				$api = tribe( 'eventbrite.event' );
+			} else {
+				// Eventbrite Tickets version 4.4.8 and prior
+				$api = tribe( 'eventbrite.api' );
+			}
+
+			$event = $api->get_event( $post_id );
 
 			if ( ! $event ) {
 				return;
@@ -418,7 +430,7 @@ if (
 			$iframe_url = sprintf( 'https://www.eventbrite%s/tickets-external?eid=%d&amp;ref=etckt&v=2', $this->get_eb_tld(), $event_id );
 			$iframe_url = apply_filters( 'tribe_events_eb_iframe_url', $iframe_url, $event_id );
 
-			$iframe_height = Tribe__Extension__Eventbrite_Addl_Opts::instance()->iframe_height();
+			$iframe_height = self::instance()->iframe_height();
 
 			$html = '';
 
@@ -446,7 +458,7 @@ if (
 			 * Allows Eventbrite iframe HTML to be modified.
 			 *
 			 * @param string $html
-			 * @param string $event_id associated Eventbrite ID
+			 * @param string $event_id The associated Eventbrite ID.
 			 * @param int    $post_id
 			 */
 			return apply_filters( 'tribe_events_eb_iframe_html', $html, $event_id, $post_id );
