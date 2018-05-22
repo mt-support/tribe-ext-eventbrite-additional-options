@@ -1,8 +1,10 @@
 <?php
 /**
  * Plugin Name: Eventbrite Tickets Extension: Additional Options
+ * Plugin URI:        https://theeventscalendar.com/extensions/eventbrite-additional-options/
+ * GitHub Plugin URI: https://github.com/mt-support/tribe-ext-eventbrite-additional-options
  * Description: Adds a new Eventbrite options section to the bottom of wp-admin > Events > Settings > Imports tab. Options include text above or below iframe ticket area, iframe height, moving ticket area's location on the Single Event view, displaying tickets for Private Eventbrite events, change API URL (e.g. from .com to .co.uk), and more.
- * Version: 1.0.2
+ * Version: 1.0.3
  * Extension Class: Tribe__Extension__Eventbrite_Addl_Opts
  * Author: Modern Tribe, Inc.
  * Author URI: http://m.tri.be/1971
@@ -20,7 +22,11 @@ if (
 	 * Extension main class, class begins loading on init() function.
 	 */
 	class Tribe__Extension__Eventbrite_Addl_Opts extends Tribe__Extension {
-
+		/**
+		 * Namespace prefix for this extension's database options.
+		 *
+		 * @var string
+		 */
 		protected $opts_prefix = 'tribe_ext_eventbrite_opts_';
 
 		/**
@@ -36,8 +42,6 @@ if (
 
 			// Set the extension's TEC URL
 			$this->set_url( 'https://theeventscalendar.com/extensions/eventbrite-additional-options/' );
-
-			$this->set_version( '1.0.2' );
 		}
 
 		/**
