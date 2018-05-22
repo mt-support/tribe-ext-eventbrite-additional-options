@@ -37,7 +37,7 @@ We're always interested in your feedback and our [premium forums](https://theeve
 
 == Changelog ==
 
-= 1.0.3 2018-05-23 =
+= 1.0.3 2018-05-22 =
 
 * Feature - Add plugin header requirements to enable using GitHub Updater to keep this extension plugin updated automatically
 * Fix - Avoid fatal caused by upcoming Eventbrite Tickets version 4.5+
