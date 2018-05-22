@@ -406,8 +406,16 @@ if (
 		 */
 		public function render_tickets_iframe_private_eb_events() {
 			$post_id = get_the_ID();
-			$api     = tribe( 'eventbrite.api' );
-			$event   = $api->get_event( $post_id );
+
+			if ( class_exists( 'Tribe__Events__Tickets__Eventbrite__Event' ) ) {
+				// Eventbrite Tickets version 4.5+
+				$api = tribe( 'eventbrite.event' );
+			} else {
+				// Eventbrite Tickets version 4.4.8 and prior
+				$api = tribe( 'eventbrite.api' );
+			}
+
+			$event = $api->get_event( $post_id );
 
 			if ( ! $event ) {
 				return;
@@ -418,7 +426,7 @@ if (
 			$iframe_url = sprintf( 'https://www.eventbrite%s/tickets-external?eid=%d&amp;ref=etckt&v=2', $this->get_eb_tld(), $event_id );
 			$iframe_url = apply_filters( 'tribe_events_eb_iframe_url', $iframe_url, $event_id );
 
-			$iframe_height = Tribe__Extension__Eventbrite_Addl_Opts::instance()->iframe_height();
+			$iframe_height = self::instance()->iframe_height();
 
 			$html = '';
 
